@@ -1,11 +1,11 @@
-  applications:
-  - name: dealerreiew
+applications:
+  - name: dealerproject
     routes:
-      - route: host.domain
+      - route: rileycallaghan.mybluemix.net
     memory: 128M
     buildpack: python_buildpack
-  - name: dealerreiew-nginx
+  - name: dealerproject-nginx
     routes:
-      - route: host.domain/static
+      - route: rileycallaghan.mybluemix.net/static
     memory: 128M
     buildpack: staticfile_buildpack
