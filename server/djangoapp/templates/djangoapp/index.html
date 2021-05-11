@@ -22,6 +22,25 @@
                     <a class="navbar-brand" href="about">About Us</a>
                     <a class="navbar-brand" href="contact">Contact Us</a>
                 </div>
+
+                {% if user.is_authenticated %}
+                <div>
+                    <form class="d-flex" action="{% url 'djangoapp:logout' %}">
+                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                        <button class="btn btn-outline-secondary text-nowrap" type="submit">Logout</button>
+                    </form>
+                </div>
+                {% else %}
+                <div>
+                    <form class="d-flex" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <input class="form-control me-2" type="text" placeholder="Username" name="username">
+                        <input class="form-control me-2" type="password" placeholder="Password" name="psw">
+                        <button class="btn btn-outline-primary" type="submit">Login</button>
+                        <a class="btn btn-outline-secondary text-nowrap" type="submit"  href="{% url 'djangoapp:registration' %}">Sign-Up</a>
+                    </form>
+                </div>
+                {% endif %}
             </div>
         </nav>
     <!--Add a dealer table here -->
