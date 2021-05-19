@@ -98,12 +98,11 @@ def get_contact_us(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-def get_dealer_details(request):
+def get_dealer_details(request, **kwargs):
     if request.method == "GET":
-        print(request)
-        url = "https://00b8e258.us-south.apigw.appdomain.cloud/api/reviews"
+        url = "https://00b8e258.us-south.apigw.appdomain.cloud/api/review"
         # Get dealers from the URL
-        reviews = get_dealer_reviews_from_cf(url)
+        reviews = get_dealer_reviews_from_cf(url, dealership=kwargs["dealership"])
         # Concat all dealer's short name
         review_names = ' '.join([review.name for review in reviews])
         # Return a list of dealer short name

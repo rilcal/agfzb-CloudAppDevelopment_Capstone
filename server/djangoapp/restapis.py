@@ -2,14 +2,26 @@ import requests
 import json
 from .models import CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
-
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
 
 def get_request(url, **kwargs):
     print("GET from {} ".format(url))
+    if "api_key" in kwargs:
+        api_key = kwargs['api_key']
+    else:
+        api_key = ''
+
+    print(api_key)
     try:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
-                                    params=kwargs)
+        if api_key:
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
+                                        params=kwargs['params'], auth=HTTPBasicAuth('apikey', api_key))
+        else:
+            response = requests.get(url, headers={'Content-Type': 'application/json'},
+                            params=kwargs)
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -61,6 +73,7 @@ def get_dealer_reviews_from_cf(url, dealership):
                     car_year="",
                     sentiment="")
             
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review)['sentiment']['document']['label']
             results.append(review_obj)
     return results
 
@@ -90,6 +103,19 @@ def get_dealers_from_cf(url, **kwargs):
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
-
+def analyze_review_sentiments(text):
+    url = "https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/03cd4645-5c60-40ac-8c3d-b5cd4e2f4998"
+    api_key = "SCKoDjMCMtnxywk81KPIosg_VwOlDU7z7ExJMX-AvW9W"
+    authenticator = IAMAuthenticator(api_key)
+    nlu = NaturalLanguageUnderstandingV1(
+        version='2020-08-01',
+        authenticator=authenticator
+    )
+    nlu.set_service_url(url)
+    response = nlu.analyze(
+        text=text,
+        features=Features(sentiment=SentimentOptions(document=True))
+    ).get_result()
+    return response
 
 
