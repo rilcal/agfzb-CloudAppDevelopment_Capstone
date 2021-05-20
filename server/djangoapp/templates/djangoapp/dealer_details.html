@@ -6,10 +6,56 @@
     {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 </head>
-
     <body>
+       <nav class="navbar navbar-light bg-light">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href=".">BCD</a>
+                    <a class="navbar-brand" href="about">About Us</a>
+                    <a class="navbar-brand" href="contact">Contact Us</a>
+                </div>
 
-    <!--Add a nav bar here -->
+                {% if user.is_authenticated %}
+                <div>
+                    <form class="d-flex" action="{% url 'djangoapp:logout' %}">
+                        <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                        <button class="btn btn-outline-secondary text-nowrap" type="submit">Logout</button>
+                    </form>
+                </div>
+                {% else %}
+                <div>
+                    <form class="d-flex" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <input class="form-control me-2" type="text" placeholder="Username" name="username">
+                        <input class="form-control me-2" type="password" placeholder="Password" name="psw">
+                        <button class="btn btn-outline-primary" type="submit">Login</button>
+                        <a class="btn btn-outline-secondary text-nowrap" type="submit"  href="{% url 'djangoapp:registration' %}">Sign-Up</a>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </nav>
+        {% if user.is_authenticated %}
+        <a></a>
+        {% endif %}
+
+        <div class= "card-columns">
+            {% for review in reviews %}
+            <div class="card">
+                {% if review.sentiment == "positive"%}
+                <img class="card-img-left" src="">
+                {% elif review.sentiment == "negative" %}
+                <img class="card-img-left" src="{{MEDIA_URL}}/emoji/negative.png">
+                {% else %}
+                <img class="card-img-left" src="{{MEDIA_URL}}/emoji/neutral.png">
+                {% endif %}
+                <div class="card-body">
+                    <label class="card-title">{{review.car_make}}</label>
+                    <p class="card-text">{{review.review}}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
 
     <!-- Add reviews as cards -->
 

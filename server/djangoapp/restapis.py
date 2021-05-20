@@ -39,9 +39,13 @@ def get_dealer_reviews_from_cf(url, dealership):
     results = []
     # Call get_request with a URL parameter
     json_result = get_request(url, dealership=dealership)
+    print(json_result)
     if json_result:
         # Get the row list in JSON as dealers
-        reviews = json_result["filtered_entries"]
+        try:
+            reviews = json_result["filtered_entries"]
+        except:
+            return results
         # For each dealer object
         for review in reviews:
             # Get its content in `doc` object
@@ -73,7 +77,7 @@ def get_dealer_reviews_from_cf(url, dealership):
                     car_year="",
                     sentiment="")
             
-            review_obj.sentiment = analyze_review_sentiments(review_obj.review)['sentiment']['document']['label']
+            review_obj.sentiment = analyze_review_sentiments(review_obj.review)
             results.append(review_obj)
     return results
 
@@ -112,10 +116,15 @@ def analyze_review_sentiments(text):
         authenticator=authenticator
     )
     nlu.set_service_url(url)
-    response = nlu.analyze(
-        text=text,
-        features=Features(sentiment=SentimentOptions(document=True))
-    ).get_result()
-    return response
+    try:
+        response = nlu.analyze(
+            text=text,
+            features=Features(sentiment=SentimentOptions(document=True))
+        ).get_result()
+        sent = response['sentiment']['document']['label']
+    except:
+        sent = "neutral"
+
+    return sent
 
 
