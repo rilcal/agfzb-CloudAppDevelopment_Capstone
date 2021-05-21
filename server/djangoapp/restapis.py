@@ -53,7 +53,6 @@ def get_dealer_reviews_from_cf(url, dealership):
             # Create a CarDealer object with values in `doc` object
             if review_doc['purchase']:
                 review_obj = DealerReview(
-                    id= review_doc['id'],
                     dealership=review_doc['dealership'],
                     name=review_doc['name'],
                     purchase=review_doc['purchase'],
@@ -66,7 +65,6 @@ def get_dealer_reviews_from_cf(url, dealership):
 
             else:
                 review_obj = DealerReview(
-                    id= review_doc['id'],
                     dealership=review_doc['dealership'],
                     name=review_doc['name'],
                     purchase=review_doc['purchase'],
@@ -126,5 +124,27 @@ def analyze_review_sentiments(text):
         sent = "neutral"
 
     return sent
+
+
+def post_request(url, **kwargs):
+    print("POST to {} ".format(url))
+
+    try:
+        response = requests.post(url, headers={'Content-Type': 'application/json'},
+                            data=kwargs['data'])
+    except:
+        # If any error occurs
+        print("Network exception occurred")
+
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+    json_data = json.loads(response.text)
+    return json_data
+
+def post_review(doc):
+    doc['sentiment'] = "nuetral"
+    url = "https://00b8e258.us-south.apigw.appdomain.cloud/api/review"
+    post_request(url, data=doc)
+    return 
 
 

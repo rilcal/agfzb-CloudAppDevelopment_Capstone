@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 from .models import CarDealer, CarMake, CarModel
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_review
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -113,5 +113,17 @@ def add_review(request, **kwargs):
         context['dealer'] = kwargs['dealership_id']
         return render(request, 'djangoapp/add_review.html', context)
     if request.method == "POST":
-        return
+        doc = {}
+        doc['name'] = request.POST['first_name'] + request.POST['last_name']
+        doc['review'] = request.POST['content']
+        doc['purchase'] = request.POST['purchasecheck']
+        doc['purchase_date'] = request.POST['purchasedate'][0:4]
+        doc['dealership'] = kwargs['dealership_id']
+        car_breakdown = request.POST['car'].split("-")
+        doc['car_year'] = car_breakdown[2]
+        doc['car_make'] = car_breakdown[1]
+        doc['car_model'] = car_breakdown[0]
+        post_review(doc)
+        return redirect("djangoapp:index")
+        
 
