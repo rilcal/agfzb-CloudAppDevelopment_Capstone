@@ -114,16 +114,22 @@ def add_review(request, **kwargs):
         return render(request, 'djangoapp/add_review.html', context)
     if request.method == "POST":
         doc = {}
-        doc['name'] = request.POST['first_name'] + request.POST['last_name']
-        doc['review'] = request.POST['content']
-        doc['purchase'] = request.POST['purchasecheck']
-        doc['purchase_date'] = request.POST['purchasedate'][0:4]
-        doc['dealership'] = kwargs['dealership_id']
-        car_breakdown = request.POST['car'].split("-")
-        doc['car_year'] = car_breakdown[2]
-        doc['car_make'] = car_breakdown[1]
-        doc['car_model'] = car_breakdown[0]
-        post_review(doc)
+        if request.POST['purchasecheck'] == 'true':
+            doc['name'] = request.POST['first_name'] + " " + request.POST['last_name']
+            doc['review'] = request.POST['content']
+            doc['purchase'] = True
+            doc['purchase_date'] = request.POST['purchasedate']
+            doc['dealership'] = kwargs['dealership_id']
+            car_breakdown = request.POST['car'].split("-")
+            doc['car_year'] = car_breakdown[2]
+            doc['car_make'] = car_breakdown[1]
+            doc['car_model'] = car_breakdown[0]
+        else:
+            doc['name'] = request.POST['first_name'] + " " + request.POST['last_name']
+            doc['review'] = request.POST['content']
+            doc['purchase'] = False
+            doc['dealership'] = kwargs['dealership_id']
+        post_review(json.dumps(doc))
         return redirect("djangoapp:index")
         
 

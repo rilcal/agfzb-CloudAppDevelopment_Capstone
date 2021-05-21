@@ -130,19 +130,18 @@ def post_request(url, **kwargs):
     print("POST to {} ".format(url))
 
     try:
-        response = requests.post(url, headers={'Content-Type': 'application/json'},
-                            data=kwargs['data'])
+        response = requests.post(url, data=kwargs['data'])
     except:
         # If any error occurs
         print("Network exception occurred")
 
     status_code = response.status_code
-    print("With status {} ".format(status_code))
     json_data = json.loads(response.text)
+    print("With status {} ".format(status_code))
+    print(json_data)
     return json_data
 
 def post_review(doc):
-    doc['sentiment'] = "nuetral"
     url = "https://00b8e258.us-south.apigw.appdomain.cloud/api/review"
     post_request(url, data=doc)
     return 
