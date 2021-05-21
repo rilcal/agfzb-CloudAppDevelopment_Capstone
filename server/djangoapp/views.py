@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarDealer
+from .models import CarDealer, CarMake, CarModel
 from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -15,15 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 # Create your views here.
-
-
-# Create an `about` view to render a static about page
-# def about(request):
-# ...
-
-
-# Create a `contact` view to return a static contact page
-#def contact(request):
 
 # Create a `login_request` view to handle sign in request
 # def login_request(request):
@@ -106,13 +97,20 @@ def get_dealer_details(request, **kwargs):
         context = {}
         url = "https://00b8e258.us-south.apigw.appdomain.cloud/api/review"
         # Get dealers from the URL
-        reviews = get_dealer_reviews_from_cf(url, dealership=kwargs["dealership"])
+        reviews = get_dealer_reviews_from_cf(url, dealership=kwargs["dealership_id"])
         # Concat all dealer's short name
         context['reviews'] = reviews
+        context['dealer'] = kwargs["dealership_id"]
         # Return a list of dealer short name
         return render(request, 'djangoapp/dealer_details.html', context)
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, **kwargs):
+    if request.method == "GET":
+        context = {}
+        cars_at_dealership = CarModel.objects.filter(DEALER_ID=kwargs['dealership_id'])
+        context['cars'] = cars_at_dealership
+        return render(request, 'djangoapp/add_review.html', context)
+    if request.method == "POST":
+        return
 
