@@ -110,6 +110,7 @@ def add_review(request, **kwargs):
         context = {}
         cars_at_dealership = CarModel.objects.filter(DEALER_ID=kwargs['dealership_id'])
         context['cars'] = cars_at_dealership
+        context['dealer'] = kwargs['dealership_id']
         return render(request, 'djangoapp/add_review.html', context)
     if request.method == "POST":
         return
