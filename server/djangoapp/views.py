@@ -129,7 +129,11 @@ def add_review(request, **kwargs):
             doc['review'] = request.POST['content']
             doc['purchase'] = False
             doc['dealership'] = kwargs['dealership_id']
-        post_review(json.dumps(doc))
+
+        data = {
+            "doc": doc
+        }
+        post_review(json.dumps(data))
         return redirect("djangoapp:index")
         
 

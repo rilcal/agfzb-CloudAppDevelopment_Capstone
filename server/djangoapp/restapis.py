@@ -130,7 +130,7 @@ def post_request(url, **kwargs):
     print("POST to {} ".format(url))
 
     try:
-        response = requests.post(url, data=kwargs['data'])
+        response = requests.post(url, headers={'Content-Type': 'application/json'}, data=kwargs['data'])
     except:
         # If any error occurs
         print("Network exception occurred")
